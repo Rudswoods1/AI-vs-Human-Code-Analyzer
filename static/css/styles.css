@@ -1,0 +1,41 @@
+body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'; }
+.bg-black { background-color: #000 !important; }
+.bg-dark { background-color: #111 !important; }
+.text-light { color: #f5f5f5 !important; }
+.text-secondary { color: #9aa0a6 !important; }
+.border-secondary { border-color: rgba(255,255,255,0.15) !important; }
+.card { border-radius: 12px; }
+.btn-light { border-radius: 10px; }
+textarea.form-control { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 0.9rem; }
+.table-dark { --bs-table-bg: #0f0f0f; --bs-table-striped-bg: #151515; }
+.navbar { backdrop-filter: blur(4px); }
+
+/* Inputs as grey (dark theme) */
+.form-control { background-color: #111111; color: #f5f5f5; border-color: #444; }
+.form-control:focus { background-color: #111111; color: #f5f5f5; border-color: #666; box-shadow: none; }
+textarea.form-control::placeholder { color: #f5f5f5; opacity: 0.7; }
+
+/* Light theme tweaks */
+html[data-theme="light"] .bg-black { background-color: #fff !important; }
+html[data-theme="light"] .border-secondary { border-color: rgba(0,0,0,0.15) !important; }
+html[data-theme="light"] .text-secondary { color: #555 !important; }
+html[data-theme="light"] .text-light { color: #111 !important; } /* force dark text */
+html[data-theme="light"] .table-dark { --bs-table-bg: #ffffff; --bs-table-striped-bg: #f7f7f7; color: #111 !important; }
+html[data-theme="light"] .table { color: #111 !important; }
+html[data-theme="light"] .card { color: #111; }
+/* Inputs lighter (light theme) */
+html[data-theme="light"] .form-control { background-color: #f5f5f5; color: #111; border-color: #bbb; }
+html[data-theme="light"] textarea.form-control { background-color: #f7f7f7; color: #111; }
+html[data-theme="light"] .form-control:focus { background-color: #f5f5f5; color: #111; border-color: #999; box-shadow: none; }
+textarea.form-control::placeholder { color: #676767; opacity: 0.7; }
+
+/* Navbar brand black in light theme */
+html[data-theme="light"] .navbar .navbar-brand { color: #000 !important; }
+
+/* Table cell colors per theme */
+html[data-theme="dark"] .table td, html[data-theme="dark"] .table th { color: #f5f5f5 !important; }
+html[data-theme="light"] .table td, html[data-theme="light"] .table th { color: #111 !important; }
+
+/* Canvas color hint per theme (for consistency) */
+html[data-theme="light"] #metricsChart { color: #111 !important; }
+html[data-theme="dark"] #metricsChart { color: #f5f5f5 !important; }

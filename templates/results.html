@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Результаты — AI vs Human</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  </head>
+  <body class="bg-dark text-light">
+    <nav class="navbar navbar-dark bg-black border-bottom border-secondary">
+      <div class="container d-flex align-items-center gap-3">
+        <a class="navbar-brand" href="{{ url_for('index') }}">AI vs Human Code Analyzer</a>
+        <a class="nav-link text-secondary" href="{{ url_for('about') }}">О проекте</a>
+        <button id="themeToggle" class="btn btn-outline-light btn-sm ms-auto">Светлая</button>
+      </div>
+    </nav>
+
+    <main class="container py-4">
+      <div class="row g-4">
+        <div class="col-12">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <div class="card bg-black text-light border-secondary h-100">
+                <div class="card-body">
+                  <h6 class="text-secondary">Тесты (пройдено)</h6>
+                  <div class="display-6">Human: {{ results.human.tests_passed }}</div>
+                  {% if results.human.pytest_error %}
+                    <div class="small text-danger mt-2">{{ results.human.pytest_error }}</div>
+                  {% endif %}
+                  <div class="display-6 mt-2">AI: {{ results.ai.tests_passed }}</div>
+                  {% if results.ai.pytest_error %}
+                    <div class="small text-danger mt-2">{{ results.ai.pytest_error }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-black text-light border-secondary h-100">
+                <div class="card-body">
+                  <h6 class="text-secondary">Стиль (Pylint/10)</h6>
+                  <div class="display-6">Human: {{ results.human.pylint_score }}</div>
+                  {% if results.human.pylint_error %}
+                    <div class="small text-danger mt-2">{{ results.human.pylint_error }}</div>
+                  {% endif %}
+                  <div class="display-6 mt-2">AI: {{ results.ai.pylint_score }}</div>
+                  {% if results.ai.pylint_error %}
+                    <div class="small text-danger mt-2">{{ results.ai.pylint_error }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-black text-light border-secondary h-100">
+                <div class="card-body">
+                  <h6 class="text-secondary">Безопасность (Bandit)</h6>
+                  <div class="display-6">Human: {{ results.human.bandit_vulns }}</div>
+                  {% if results.human.bandit_error %}
+                    <div class="small text-danger mt-2">{{ results.human.bandit_error }}</div>
+                  {% endif %}
+                  <div class="display-6 mt-2">AI: {{ results.ai.bandit_vulns }}</div>
+                  {% if results.ai.bandit_error %}
+                    <div class="small text-danger mt-2">{{ results.ai.bandit_error }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-black text-light border-secondary h-100">
+                <div class="card-body">
+                  <h6 class="text-secondary">Сложность (MI)</h6>
+                  <div class="display-6">Human: {{ results.human.radon_mi }}</div>
+                  {% if results.human.radon_error %}
+                    <div class="small text-danger mt-2">{{ results.human.radon_error }}</div>
+                  {% endif %}
+                  <div class="display-6 mt-2">AI: {{ results.ai.radon_mi }}</div>
+                  {% if results.ai.radon_error %}
+                    <div class="small text-danger mt-2">{{ results.ai.radon_error }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI detection section moved below metric cards -->
+        <div class="col-12">
+          <div class="row g-3 mt-1">
+            <div class="col-md-6">
+              <div class="card bg-black text-light border-secondary h-100">
+                <div class="card-body">
+                  <h6 class="text-secondary">🤖 AI-Generated Code Detected (Human)</h6>
+                  <div>Confidence Level: {{ results.human.ai_detection.confidence }}%</div>
+                  <div>Human-like: {{ results.human.ai_detection.human_like }}%</div>
+                  <div>AI-like: {{ results.human.ai_detection.ai_like }}%</div>
+                  <hr class="border-secondary">
+                  <div class="small text-secondary">Human Code Metrics</div>
+                  <div>Function Naming: {{ results.human.heuristics.function_naming }}%</div>
+                  <div>Variable Naming: {{ results.human.heuristics.variable_naming }}%</div>
+                  <div>Indentation: {{ results.human.heuristics.indentation }}%</div>
+                  <div>Comment Ratio: {{ results.human.heuristics.comment_ratio }}%</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card bg-black text-light border-secondary h-100">
+                <div class="card-body">
+                  <h6 class="text-secondary">🤖 AI-Generated Code Detected (AI)</h6>
+                  <div>Confidence Level: {{ results.ai.ai_detection.confidence }}%</div>
+                  <div>Human-like: {{ results.ai.ai_detection.human_like }}%</div>
+                  <div>AI-like: {{ results.ai.ai_detection.ai_like }}%</div>
+                  <hr class="border-secondary">
+                  <div class="small text-secondary">LLM Code Metrics</div>
+                  <div>Function Naming: {{ results.ai.heuristics.function_naming }}%</div>
+                  <div>Variable Naming: {{ results.ai.heuristics.variable_naming }}%</div>
+                  <div>Indentation: {{ results.ai.heuristics.indentation }}%</div>
+                  <div>Comment Ratio: {{ results.ai.heuristics.comment_ratio }}%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="card bg-black text-light border-secondary">
+            <div class="card-body">
+              <h5 class="card-title">Сравнительная таблица</h5>
+              <div class="table-responsive">
+                <table class="table table-dark table-striped table-bordered border-secondary align-middle">
+                  <thead>
+                    <tr>
+                      <th>Метрика</th>
+                      <th>Human</th>
+                      <th>AI</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Тесты пройдены</td>
+                      <td>{{ results.human.tests_passed }}</td>
+                      <td>{{ results.ai.tests_passed }}</td>
+                    </tr>
+                    <tr>
+                      <td>Pylint (0-10)</td>
+                      <td>{{ results.human.pylint_score }}</td>
+                      <td>{{ results.ai.pylint_score }}</td>
+                    </tr>
+                    <tr>
+                      <td>Bandit уязвимости</td>
+                      <td>{{ results.human.bandit_vulns }}</td>
+                      <td>{{ results.ai.bandit_vulns }}</td>
+                    </tr>
+                    <tr>
+                      <td>Radon MI</td>
+                      <td>{{ results.human.radon_mi }}</td>
+                      <td>{{ results.ai.radon_mi }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <canvas id="metricsChart" height="120" class="mt-3"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="border-top border-secondary py-3 bg-black text-secondary">
+      <div class="container small text-center">
+        Created by team Courage and Stupiddy — Askar, Nursultan, and Nurbol
+      </div>
+    </footer>
+
+    <script>
+      (function(){
+        const root = document.documentElement;
+        const body = document.body;
+        const btn = document.getElementById('themeToggle');
+        const key = 'avs-theme';
+        function apply(t){
+          root.setAttribute('data-theme', t);
+          if(t==='light'){
+            body.classList.remove('bg-dark','text-light');
+            body.classList.add('bg-white','text-dark');
+            btn.classList.remove('btn-outline-light');
+            btn.classList.add('btn-outline-dark');
+            btn.textContent='Тёмная';
+          } else {
+            body.classList.remove('bg-white','text-dark');
+            body.classList.add('bg-dark','text-light');
+            btn.classList.remove('btn-outline-dark');
+            btn.classList.add('btn-outline-light');
+            btn.textContent='Светлая';
+          }
+        }
+        const init = localStorage.getItem(key) || 'dark';
+        apply(init);
+        btn.addEventListener('click', ()=>{
+          const next = (root.getAttribute('data-theme')==='dark')?'light':'dark';
+          localStorage.setItem(key,next);
+          apply(next);
+        });
+      })();
+    </script>
+
+    <script>
+      (function(){
+        const ctx = document.getElementById('metricsChart');
+        if(!ctx || !window.Chart) return;
+        let chartInstance = null;
+
+        function buildChart() {
+          const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+          const axisColor = isLight ? '#222222' : '#ffffff';
+          const gridColor = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.2)';
+          const legendColor = isLight ? '#222222' : '#ffffff';
+          const data = {
+            labels: ['Tests Passed', 'Pylint', 'Bandit (lower better)', 'Radon MI'],
+            datasets: [
+              {
+                label: 'Human',
+                backgroundColor: 'rgba(25, 118, 210, 0.6)',
+                borderColor: 'rgba(25, 118, 210, 1)',
+                data: [
+                  {{ results.human.tests_passed | default(0) }},
+                  {{ results.human.pylint_score | default(0) }},
+                  {{ results.human.bandit_vulns | default(0) }},
+                  {{ results.human.radon_mi | default(0) }}
+                ]
+              },
+              {
+                label: 'AI',
+                backgroundColor: 'rgba(56, 142, 60, 0.6)',
+                borderColor: 'rgba(56, 142, 60, 1)',
+                data: [
+                  {{ results.ai.tests_passed | default(0) }},
+                  {{ results.ai.pylint_score | default(0) }},
+                  {{ results.ai.bandit_vulns | default(0) }},
+                  {{ results.ai.radon_mi | default(0) }}
+                ]
+              }
+            ]
+          };
+
+          const options = {
+            responsive: true,
+            scales: {
+              x: { ticks: { color: axisColor }, grid: { color: gridColor } },
+              y: { ticks: { color: axisColor }, grid: { color: gridColor } }
+            },
+            plugins: {
+              legend: { labels: { color: legendColor } }
+            }
+          };
+
+          if (chartInstance) {
+            chartInstance.destroy();
+          }
+          chartInstance = new Chart(ctx, { type: 'bar', data, options });
+        }
+
+        // Build initially
+        buildChart();
+
+        // Rebuild when theme changes via MutationObserver
+        const observer = new MutationObserver((mutations) => {
+          for (const m of mutations) {
+            if (m.type === 'attributes' && m.attributeName === 'data-theme') {
+              buildChart();
+              break;
+            }
+          }
+        });
+        observer.observe(document.documentElement, { attributes: true });
+      })();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
