@@ -1,3 +1,7 @@
+<img width="1920" height="966" alt="image" src="https://github.com/user-attachments/assets/f28039d0-8c46-4763-bc96-a7a0c2db2094" />
+<img width="1920" height="966" alt="image" src="https://github.com/user-attachments/assets/52867db7-9e2b-49aa-94db-a0611bab02fe" />
+
+
 # AI vs Human Code Analyzer
 
 A minimal Flask web app to compare AI-generated vs Human-written Python code by running:
