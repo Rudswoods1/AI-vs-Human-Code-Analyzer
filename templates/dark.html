@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI vs Human Code Analyzer</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap">
+    <link href="{{ url_for('static', filename='css/dark.css') }}" rel="stylesheet">
+  </head>
+  <body>
+    <div class="design-light-ui-container1">
+      <div class="design-light-ui-design-light-ui">
+        <img
+          src="{{ url_for('static', filename='images/pawel-czerwinski-8YX-02nWmyI-unsplash 1.png') }}"
+          alt="Background"
+          class="design-light-ui-yuema-dw46bt-g90-xgunsplash"
+        />
+
+        <h1 class="design-light-ui-title">
+          What code we need to analyze?
+        </h1>
+
+        <form action="{{ url_for('analyze') }}" method="post" enctype="multipart/form-data">
+          <div class="design-light-uiai-analyze-box">
+            <span class="design-light-ui-text10">
+              Download files or write the code
+            </span>
+            <img
+              src="{{ url_for('static', filename='images/ellipse14511-4cf3-200h.png') }}"
+              alt="Ellipse14511"
+              class="design-light-ui-ellipse1"
+            />
+            
+            <!-- Human Code Section -->
+            <div class="design-light-ui-humancode">
+              <textarea 
+                name="human_code" 
+                class="design-light-ui-text11" 
+                placeholder="Enter human code here..."
+                rows="8"
+              ></textarea>
+              <img
+                src="{{ url_for('static', filename='images/line14510-8rd.svg') }}"
+                alt="Line14510"
+                class="design-light-ui-line11"
+              />
+              <label for="human_file" class="design-light-ui-attach-label">
+                <img
+                  src="{{ url_for('static', filename='images/icons83014598-di5c-200h.png') }}"
+                  alt="icons83014598"
+                  class="design-light-ui-icons83011"
+                />
+                <span class="design-light-ui-text12">Attach</span>
+              </label>
+              <input type="file" id="human_file" name="human_file" accept=".py" style="display: none;">
+              <img
+                src="{{ url_for('static', filename='images/icons84814510-0i3k-200h.png') }}"
+                alt="icons84814510"
+                class="design-light-ui-icons84811"
+              />
+              <span class="design-light-ui-text13">0/5000</span>
+            </div>
+            
+            <!-- AI Code Section -->
+            <div class="design-light-ui-aicode">
+              <textarea 
+                name="ai_code" 
+                class="design-light-ui-text14" 
+                placeholder="Enter AI code here..."
+                rows="8"
+              ></textarea>
+              <img
+                src="{{ url_for('static', filename='images/line14511-etm.svg') }}"
+                alt="Line14511"
+                class="design-light-ui-line12"
+              />
+              <label for="ai_file" class="design-light-ui-attach-label">
+                <img
+                  src="{{ url_for('static', filename='images/icons83014511-xhg6-200h.png') }}"
+                  alt="icons83014511"
+                  class="design-light-ui-icons83012"
+                />
+                <span class="design-light-ui-text15">Attach</span>
+              </label>
+              <input type="file" id="ai_file" name="ai_file" accept=".py" style="display: none;">
+              <img
+                src="{{ url_for('static', filename='images/icons84814511-v9qj-200h.png') }}"
+                alt="icons84814511"
+                class="design-light-ui-icons84812"
+              />
+              <span class="design-light-ui-text16">0/5000</span>
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" class="design-light-ui-submit-btn">
+              <img
+                src="{{ url_for('static', filename='images/icons8right2414512-c638-200h.png') }}"
+                alt="Submit"
+                class="design-light-ui-icons8right241"
+              />
+            </button>
+          </div>
+        </form>
+
+        <!-- Footer -->
+        <div class="design-light-ui-footer">
+          <div class="design-light-ui-sign-up-block2">
+            <a href="{{ url_for('about') }}">
+              <span class="design-light-ui-text18">About Us</span>
+            </a>
+          </div>
+          
+          <div class="design-light-ui-search-box">
+            <img
+              src="{{ url_for('static', filename='images/icons85014458-dcr-200h.png') }}"
+              alt="Search icon"
+              class="design-light-ui-icons85012"
+            />
+            <input type="text" placeholder="Search by site...." class="design-light-ui-search-input">
+          </div>
+          
+          <div class="design-light-ui-sign-up-block1">
+            <span class="design-light-ui-text17">Login</span>
+            <span class="design-light-ui-divider">|</span>
+            <img
+              src="{{ url_for('static', filename='images/icons84814321-zk98-200h.png') }}"
+              alt="icons84814321"
+              class="design-light-ui-icons84813"
+            />
+            <img
+              src="{{ url_for('static', filename='images/icons83014327-td1s-200h.png') }}"
+              alt="icons83014327"
+              class="design-light-ui-icons83013"
+            />
+          </div>
+          
+          <div class="design-light-ui-dark-lighttheme">
+            <button id="themeToggle" class="theme-toggle-btn">
+              <img
+                src="{{ url_for('static', filename='images/rectangle64434-p0lg-200h.png') }}"
+                alt="Rectangle64434"
+                class="design-light-ui-rectangle6"
+              />
+              <img
+                src="{{ url_for('static', filename='images/icons8-crescent-moon-48.png') }}"
+                alt="Theme toggle"
+                class="design-light-ui-icons85011"
+              />
+            </button>
+          </div>
+        </div>
+        
+        <img
+          src="{{ url_for('static', filename='images/icons8-aboutUs-24.png') }}"
+          alt="About Us icon"
+          class="design-light-ui-icons8magento501"
+        />
+      </div>
+    </div>
+
+    <script>
+      // Character counter for textareas
+      document.querySelectorAll('textarea').forEach(textarea => {
+        textarea.addEventListener('input', function() {
+          const counter = this.parentElement.querySelector('.design-light-ui-text13, .design-light-ui-text16');
+          if (counter) {
+            counter.textContent = `${this.value.length}/1000`;
+          }
+        });
+      });
+
+      // Theme toggle functionality
+      const themeToggle = document.getElementById('themeToggle');
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          document.body.classList.toggle('light-theme');
+          localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+        });
+        
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'light') {
+          document.body.classList.add('light-theme');
+        }
+      }
+    </script>
+  </body>
+</html>
