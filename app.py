@@ -11,6 +11,68 @@ from typing import Dict, Any, Tuple, Optional
 from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 
+# --- LSTM Model Integration ---
+import torch
+import torch.nn as nn
+import numpy as np
+import re
+
+MODEL_PATH = r"C:\Users\nurbolik\Downloads\Telegram Desktop\AI-vs-Human-Code-Analyzer-main-with-ai\AI-vs-Human-Code-Analyzer-main\ai_code_detector_lstm.pth"
+MAX_LEN = 3000
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
+
+# Модель как в обучении
+class CodeClassifier(nn.Module):
+    def __init__(self, vocab_size, embed_dim=128, hidden_dim=256, num_classes=2):
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, embed_dim)
+        self.lstm = nn.LSTM(embed_dim, hidden_dim, batch_first=True)
+        self.fc = nn.Linear(hidden_dim, num_classes)
+        self.dropout = nn.Dropout(0.3)
+
+    def forward(self, x):
+        x = self.embedding(x)
+        _, (h, _) = self.lstm(x)
+        out = self.dropout(h[-1])
+        return self.fc(out)
+
+
+# Загрузка модели
+checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)
+vocab = checkpoint["vocab"]
+label_classes = checkpoint["label_encoder"]
+model = CodeClassifier(len(vocab)).to(DEVICE)
+model.load_state_dict(checkpoint["model_state"])
+model.eval()
+
+
+def simple_tokenizer(code):
+    code = code.lower()
+    tokens = re.findall(r"[a-zA-Z_]+|\S", code)
+    return tokens[:MAX_LEN]
+
+
+def encode(tokens):
+    ids = [vocab.get(t, 1) for t in tokens]
+    if len(ids) < MAX_LEN:
+        ids += [0] * (MAX_LEN - len(ids))
+    return ids[:MAX_LEN]
+
+
+def predict_lstm(code_text: str):
+    tokens = simple_tokenizer(code_text)
+    ids = encode(tokens)
+    x = torch.tensor([ids], dtype=torch.long).to(DEVICE)
+    with torch.no_grad():
+        outputs = model(x)
+        probs = torch.softmax(outputs, dim=1).cpu().numpy()[0]
+    pred_idx = int(np.argmax(probs))
+    pred_label = label_classes[pred_idx]
+    confidence = float(np.max(probs) * 100)
+    return {"label": pred_label, "confidence": round(confidence, 2)}
+
+
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
 
@@ -34,7 +96,9 @@ def write_code_to_file(base_dir: Path, filename: str, code: str) -> Path:
     return path
 
 
-def save_upload_to(base_dir: Path, field_name: str, dest_filename: str) -> Tuple[bool, Path, str]:
+def save_upload_to(
+    base_dir: Path, field_name: str, dest_filename: str
+) -> Tuple[bool, Path, str]:
     file = request.files.get(field_name)
     if not file or file.filename == "":
         return False, Path(), "No file provided"
@@ -51,7 +115,9 @@ def save_upload_to(base_dir: Path, field_name: str, dest_filename: str) -> Tuple
     return True, dest_path, ""
 
 
-def run_command(cmd: list, cwd: Path, timeout: int = 20, env: Optional[Dict[str, str]] = None) -> Tuple[int, str, str]:
+def run_command(
+    cmd: list, cwd: Path, timeout: int = 20, env: Optional[Dict[str, str]] = None
+) -> Tuple[int, str, str]:
     try:
         merged_env = os.environ.copy()
         if env:
@@ -64,6 +130,7 @@ def run_command(cmd: list, cwd: Path, timeout: int = 20, env: Optional[Dict[str,
             timeout=timeout,
             check=False,
             env=merged_env,
+            shell=(os.name == "nt")
         )
         return proc.returncode, proc.stdout, proc.stderr
     except subprocess.TimeoutExpired as e:
@@ -134,9 +201,12 @@ def test_main_if_exists():
 """
     test_path = tmp / "test_smoke.py"
     test_path.write_text(test_code, encoding="utf-8")
-    code, out, err = run_command([
-        "pytest", "-q", str(test_path.name)
-    ], cwd=tmp, timeout=25, env={"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"})
+    code, out, err = run_command(
+        ["pytest", "-q", str(test_path.name)],
+        cwd=tmp,
+        timeout=25,
+        env={"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"},
+    )
     passed = 0
     failed = 0
     m = re.search(r"(\d+)\s+passed", out)
@@ -149,7 +219,14 @@ def test_main_if_exists():
     if code != 0 and passed == 0 and failed == 0:
         snippet = (out + "\n" + err).strip()
         error_msg = "\n".join(snippet.splitlines()[:30])[:1500]
-    return {"returncode": code, "stdout": out, "stderr": err, "passed": passed, "failed": failed, "error": error_msg}
+    return {
+        "returncode": code,
+        "stdout": out,
+        "stderr": err,
+        "passed": passed,
+        "failed": failed,
+        "error": error_msg,
+    }
 
 
 def run_pylint(file_path: Path, cwd: Path) -> Dict[str, Any]:
@@ -159,7 +236,13 @@ def run_pylint(file_path: Path, cwd: Path) -> Dict[str, Any]:
     error_msg = None
     if code != 0 and score == 0.0:
         error_msg = (err or out).strip()[:500]
-    return {"returncode": code, "stdout": out, "stderr": err, "score": score, "error": error_msg}
+    return {
+        "returncode": code,
+        "stdout": out,
+        "stderr": err,
+        "score": score,
+        "error": error_msg,
+    }
 
 
 def run_bandit(file_path: Path, cwd: Path) -> Dict[str, Any]:
@@ -170,13 +253,21 @@ def run_bandit(file_path: Path, cwd: Path) -> Dict[str, Any]:
         data = json.loads(out or "{}")
         results = data.get("results", [])
         if results:
-            vulns = len([r for r in results if r.get("filename", "").endswith(file_path.name)])
+            vulns = len(
+                [r for r in results if r.get("filename", "").endswith(file_path.name)]
+            )
     except json.JSONDecodeError:
         pass
     error_msg = None
     if code != 0 and vulns == 0:
         error_msg = (err or out).strip()[:500]
-    return {"returncode": code, "stdout": out, "stderr": err, "vulns": vulns, "error": error_msg}
+    return {
+        "returncode": code,
+        "stdout": out,
+        "stderr": err,
+        "vulns": vulns,
+        "error": error_msg,
+    }
 
 
 def run_radon_mi(file_path: Path, cwd: Path) -> Dict[str, Any]:
@@ -197,18 +288,25 @@ def run_radon_mi(file_path: Path, cwd: Path) -> Dict[str, Any]:
     error_msg = None
     if code != 0 and mi == 0.0:
         error_msg = (err or out).strip()[:500]
-    return {"returncode": code, "stdout": out, "stderr": err, "mi": mi, "error": error_msg}
+    return {
+        "returncode": code,
+        "stdout": out,
+        "stderr": err,
+        "mi": mi,
+        "error": error_msg,
+    }
 
 
 # --- Heuristic metrics ---
 IDENTIFIER_RE = re.compile(r"^[a-z_][a-z0-9_]*$")
 CAMEL_RE = re.compile(r"^[a-z]+(?:[A-Z][a-z0-9]*)+$")
 
+
 def compute_heuristics(code_text: str) -> Dict[str, float]:
     lines = [ln for ln in code_text.split("\n")]
     non_empty = [ln for ln in lines if ln.strip()]
     # Comment ratio
-    comments = [ln for ln in lines if ln.strip().startswith('#')]
+    comments = [ln for ln in lines if ln.strip().startswith("#")]
     comment_ratio = (len(comments) / max(1, len(non_empty))) * 100.0
     # Indentation: rough share of lines starting with 4-space multiples
     indent_ok = 0
@@ -216,16 +314,22 @@ def compute_heuristics(code_text: str) -> Dict[str, float]:
         m = re.match(r"^(\s+)", ln)
         if m:
             sp = m.group(1)
-            spaces = sp.count(' ')
-            tabs = sp.count('\t')
+            spaces = sp.count(" ")
+            tabs = sp.count("\t")
             if tabs == 0 and (spaces % 4 == 0):
                 indent_ok += 1
     indent_pct = (indent_ok / max(1, len(non_empty))) * 100.0
     # Function and variable naming
-    func_names = re.findall(r"^\s*def\s+([a-zA-Z_][a-zA-Z0-9_]*)\(", code_text, flags=re.M)
+    func_names = re.findall(
+        r"^\s*def\s+([a-zA-Z_][a-zA-Z0-9_]*)\(", code_text, flags=re.M
+    )
     var_names = re.findall(r"^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*=", code_text, flags=re.M)
-    func_snake = sum(1 for n in func_names if IDENTIFIER_RE.match(n) and not CAMEL_RE.match(n))
-    var_snake = sum(1 for n in var_names if IDENTIFIER_RE.match(n) and not CAMEL_RE.match(n))
+    func_snake = sum(
+        1 for n in func_names if IDENTIFIER_RE.match(n) and not CAMEL_RE.match(n)
+    )
+    var_snake = sum(
+        1 for n in var_names if IDENTIFIER_RE.match(n) and not CAMEL_RE.match(n)
+    )
     func_pct = (func_snake / max(1, len(func_names))) * 100.0 if func_names else 0.0
     var_pct = (var_snake / max(1, len(var_names))) * 100.0 if var_names else 0.0
     return {
@@ -259,6 +363,15 @@ def analyze_one(tmp: Path, filename: str) -> Dict[str, Any]:
     results: Dict[str, Any] = {"filename": filename}
     # Read code text for heuristics
     code_text = (tmp / filename).read_text(encoding="utf-8", errors="replace")
+
+    # LSTM prediction
+    try:
+        nn_res = predict_lstm(code_text)
+        results["lstm_label"] = nn_res["label"]
+        results["lstm_confidence"] = nn_res["confidence"]
+    except Exception as e:
+        results["lstm_error"] = str(e)
+
     m = compute_heuristics(code_text)
     d = detect_ai_like(m)
     results["heuristics"] = m
@@ -280,6 +393,7 @@ def analyze_one(tmp: Path, filename: str) -> Dict[str, Any]:
     radon_res = run_radon_mi(Path(filename), cwd=tmp)
     results["radon_mi"] = round(radon_res.get("mi", 0.0), 2)
     results["radon_error"] = radon_res.get("error")
+    print(results)
 
     return results
 
@@ -292,6 +406,10 @@ def index():
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+@app.route('/dark')
+def dark():
+    return render_template('dark.html')
 
 
 @app.route("/analyze", methods=["POST"])
