@@ -1,224 +1,330 @@
 <!doctype html>
-<html lang="ru" data-theme="dark">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Результаты — AI vs Human</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-        />
-        <link
-            href="{{ url_for('static', filename='css/styles.css') }}"
-            rel="stylesheet"
-        />
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    </head>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Analysis Results - AI vs Human Code Analyzer</title>
 
-    <body class="bg-dark text-light">
-        <nav class="navbar navbar-dark bg-black border-bottom border-secondary">
-            <div class="container d-flex align-items-center gap-3">
-                <a class="navbar-brand" href="{{ url_for('index') }}"
-                    >AI vs Human Code Analyzer</a
-                >
-                <a class="nav-link text-secondary" href="{{ url_for('about') }}"
-                    >О проекте</a
-                >
-                <button
-                    id="themeToggle"
-                    class="btn btn-outline-light btn-sm ms-auto"
-                >
-                    Светлая
-                </button>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+
+    <style>
+      .results-container {
+        max-width: 1400px;
+        margin: 60px auto;
+        padding: 0 40px;
+      }
+
+      .results-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 36px;
+        font-weight: 700;
+        color: #1a1a1a;
+        text-align: center;
+        margin-bottom: 50px;
+      }
+
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 40px;
+      }
+
+      .result-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .result-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .card-icon {
+        font-size: 36px;
+        margin-right: 15px;
+      }
+
+      .card-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 24px;
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+
+      .metrics-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .metric-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f5f5f5;
+      }
+
+      .metric-item:last-child {
+        border-bottom: none;
+      }
+
+      .metric-label {
+        font-family: 'PT Sans', sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        color: #666;
+      }
+
+      .metric-value {
+        font-family: 'Poppins', sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+
+      .label-ai {
+        color: #00c853;
+        background: #e8f5e9;
+        padding: 6px 16px;
+        border-radius: 20px;
+      }
+
+      .label-human {
+        color: #ff6f00;
+        background: #fff3e0;
+        padding: 6px 16px;
+        border-radius: 20px;
+      }
+
+      .vuln-danger {
+        color: #d32f2f;
+      }
+
+      .vuln-safe {
+        color: #00c853;
+      }
+
+      .score-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-weight: 700;
+        font-size: 16px;
+        color: white;
+      }
+
+      .score-high {
+        background: linear-gradient(135deg, #00c853 0%, #64dd17 100%);
+      }
+
+      .score-medium {
+        background: linear-gradient(135deg, #ffa726 0%, #ffb74d 100%);
+      }
+
+      .score-low {
+        background: linear-gradient(135deg, #ef5350 0%, #e57373 100%);
+      }
+
+      .error-message {
+        font-size: 12px;
+        color: #d32f2f;
+        margin-top: 5px;
+        font-style: italic;
+      }
+
+      details summary {
+        cursor: pointer;
+        user-select: none;
+        transition: color 0.2s;
+      }
+
+      details summary:hover {
+        color: #1a1a1a !important;
+      }
+
+      details[open] summary {
+        margin-bottom: 10px;
+      }
+
+      .info-tooltip {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background: #2196f3;
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        font-size: 11px;
+        line-height: 16px;
+        margin-left: 5px;
+        cursor: help;
+      }
+
+      .back-button {
+        display: block;
+        width: 200px;
+        margin: 40px auto;
+        padding: 15px 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 30px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
+      .back-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+      }
+
+      @media (max-width: 968px) {
+        .comparison-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="results-container">
+      <h1 class="results-title">Code Analysis Results</h1>
+
+      <div class="comparison-grid">
+        {% for result in results %}
+        <div class="result-card">
+          <div class="card-header">
+            <div class="card-icon">
+              {% if loop.index == 1 %}
+                👨‍💻
+              {% else %}
+                🤖
+              {% endif %}
             </div>
-        </nav>
+            <h2 class="card-title">
+              {% if loop.index == 1 %}
+                Human Code
+              {% else %}
+                AI Code
+              {% endif %}
+            </h2>
+          </div>
 
-        <main class="container py-4">
-            <div class="row g-4">
-                <!-- Метрики -->
-                <div class="col-12">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <div
-                                class="card bg-black text-light border-secondary h-100"
-                            >
-                                <div class="card-body">
-                                    <h6 class="text-secondary">
-                                        Тесты (пройдено)
-                                    </h6>
-                                    <div class="display-6">
-                                        Human: {{ results.human.tests_passed }}
-                                    </div>
-                                    <div class="display-6 mt-2">
-                                        AI: {{ results.ai.tests_passed }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+          <ul class="metrics-list">
+            <li class="metric-item">
+              <span class="metric-label">
+                LSTM Prediction
+                <span class="info-tooltip" title="Neural network prediction: AI or Human written">?</span>
+              </span>
+              <span class="metric-value {% if result.get('ai_label') == 'AI' %}label-ai{% else %}label-human{% endif %}">
+                {{ result.get('ai_label', 'N/A') }}
+              </span>
+            </li>
 
-                        <div class="col-md-3">
-                            <div
-                                class="card bg-black text-light border-secondary h-100"
-                            >
-                                <div class="card-body">
-                                    <h6 class="text-secondary">
-                                        Стиль (Pylint/10)
-                                    </h6>
-                                    <div class="display-6">
-                                        Human: {{ results.human.pylint_score }}
-                                    </div>
-                                    <div class="display-6 mt-2">
-                                        AI: {{ results.ai.pylint_score }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <li class="metric-item">
+              <span class="metric-label">
+                Model Confidence
+                <span class="info-tooltip" title="How confident the model is in its prediction">?</span>
+              </span>
+              <span class="metric-value">{{ result.get('model_confidence', 0) }}%</span>
+            </li>
 
-                        <div class="col-md-3">
-                            <div
-                                class="card bg-black text-light border-secondary h-100"
-                            >
-                                <div class="card-body">
-                                    <h6 class="text-secondary">
-                                        Безопасность (Bandit)
-                                    </h6>
-                                    <div class="display-6">
-                                        Human: {{ results.human.bandit_vulns }}
-                                    </div>
-                                    <div class="display-6 mt-2">
-                                        AI: {{ results.ai.bandit_vulns }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <li class="metric-item">
+              <span class="metric-label">
+                Pylint Score
+                <span class="info-tooltip" title="Code quality score (0-10). Checks for errors, warnings, and style issues">?</span>
+              </span>
+              <div style="text-align: right; flex: 1;">
+                <span class="metric-value">{{ result.pylint_score }} / 10</span>
+                {% if result.get('pylint_error_count', 0) > 0 %}
+                  <div style="font-size: 11px; color: #ff6f00; margin-top: 3px;">
+                    {{ result.pylint_error_count }} issues found
+                  </div>
+                {% endif %}
+                {% if result.get('pylint_error') %}
+                  <details style="margin-top: 8px;">
+                    <summary style="cursor: pointer; color: #666; font-size: 12px;">View errors</summary>
+                    <pre class="error-message" style="white-space: pre-wrap; background: #fff3e0; padding: 10px; border-radius: 5px; margin-top: 5px; max-height: 200px; overflow-y: auto;">{{ result.pylint_error }}</pre>
+                  </details>
+                {% endif %}
+              </div>
+            </li>
 
-                        <div class="col-md-3">
-                            <div
-                                class="card bg-black text-light border-secondary h-100"
-                            >
-                                <div class="card-body">
-                                    <h6 class="text-secondary">
-                                        Сложность (MI)
-                                    </h6>
-                                    <div class="display-6">
-                                        Human: {{ results.human.radon_mi }}
-                                    </div>
-                                    <div class="display-6 mt-2">
-                                        AI: {{ results.ai.radon_mi }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <li class="metric-item">
+              <span class="metric-label">
+                Radon Maintainability
+                <span class="info-tooltip" title="Maintainability Index (0-100). Higher is better">?</span>
+              </span>
+              <div style="text-align: right; flex: 1;">
+                <span class="metric-value">{{ result.radon_mi }}</span>
+                {% if result.radon_error %}
+                  <details style="margin-top: 8px;">
+                    <summary style="cursor: pointer; color: #666; font-size: 12px;">View error</summary>
+                    <pre class="error-message" style="white-space: pre-wrap; background: #ffebee; padding: 10px; border-radius: 5px; margin-top: 5px;">{{ result.radon_error[:200] }}</pre>
+                  </details>
+                {% endif %}
+              </div>
+            </li>
 
-                <!-- 🧠 Результат LSTM -->
-                <div class="col-12">
-                    <div class="card bg-black text-light border-secondary mt-4">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                🧠 Результат нейросети (LSTM AI Detector)
-                            </h5>
-                            <p class="text-secondary mb-2">
-                                Модель LSTM анализирует код и определяет, кем он
-                                написан — человеком или искусственным
-                                интеллектом.
-                            </p>
+            <li class="metric-item">
+              <span class="metric-label">
+                Bandit Security Issues
+                <span class="info-tooltip" title="Number of vulnerabilities found by Bandit">?</span>
+              </span>
+              <div style="text-align: right; flex: 1;">
+                <span class="metric-value {% if result.bandit_vulns > 0 %}vuln-danger{% else %}vuln-safe{% endif %}">
+                  {{ result.bandit_vulns }}
+                </span>
+                {% if result.bandit_error %}
+                  <details style="margin-top: 8px;">
+                    <summary style="cursor: pointer; color: #666; font-size: 12px;">View error</summary>
+                    <pre class="error-message" style="white-space: pre-wrap; background: #ffebee; padding: 10px; border-radius: 5px; margin-top: 5px;">{{ result.bandit_error[:200] }}</pre>
+                  </details>
+                {% endif %}
+              </div>
+            </li>
 
-                            <div
-                                class="d-flex flex-column flex-md-row align-items-start gap-4"
-                            >
-                                <div class="flex-fill">
-                                <div class="flex-fill">
-                                    <h6 class="text-warning">
-                                        Результат модели:
-                                    </h6>
-                                    <div class="fs-5 mb-1">
-                                      <strong>Human Code:</strong>
-                                      {% if results.human.lstm_label == "human" %}
-                                        👨‍💻 Человеческий код
-                                      {% else %}
-                                        🤖 Сгенерированный ИИ
-                                      {% endif %}
-                                      ({{ results.human.lstm_confidence }}%)
-                                    </div>
+            <li class="metric-item">
+              <span class="metric-label">
+                <strong>Overall Quality</strong>
+                <span class="info-tooltip" title="Combined score based on Pylint, Radon, Bandit and LSTM Prediction">?</span>
+              </span>
+              <span class="score-badge
+                {% if result.final_score < 50 %}
+                  score-low
+                {% elif result.final_score < 80 %}
+                  score-medium
+                {% else %}
+                  score-high
+                {% endif %}
+              ">
+                {{ result.final_score }} / 100
+              </span>
+            </li>
+          </ul>
+        </div>
+        {% endfor %}
+      </div>
 
-                                    <div class="fs-5 mb-1 mt-3">
-                                      <strong>AI Code:</strong>
-                                      {% if results.ai.lstm_label == "human" %}
-                                        👨‍💻 Человеческий код
-                                      {% else %}
-                                        🤖 Сгенерированный ИИ
-                                      {% endif %}
-                                      ({{ results.ai.lstm_confidence }}%)
-                                    </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- График -->
-                <div class="col-12">
-                    <div class="card bg-black text-light border-secondary">
-                        <div class="card-body">
-                            <h5 class="card-title">Сравнительная таблица</h5>
-                            <canvas
-                                id="metricsChart"
-                                height="120"
-                                class="mt-3"
-                            ></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <footer
-            class="border-top border-secondary py-3 bg-black text-secondary"
-        >
-            <div class="container small text-center">
-                Created by team Courage and Stupiddy — Askar, Nursultan, and
-                Nurbol
-            </div>
-        </footer>
-
-        <script>
-            (function () {
-                const root = document.documentElement;
-                const body = document.body;
-                const btn = document.getElementById("themeToggle");
-                const key = "avs-theme";
-                function apply(t) {
-                    root.setAttribute("data-theme", t);
-                    if (t === "light") {
-                        body.classList.remove("bg-dark", "text-light");
-                        body.classList.add("bg-white", "text-dark");
-                        btn.classList.remove("btn-outline-light");
-                        btn.classList.add("btn-outline-dark");
-                        btn.textContent = "Тёмная";
-                    } else {
-                        body.classList.remove("bg-white", "text-dark");
-                        body.classList.add("bg-dark", "text-light");
-                        btn.classList.remove("btn-outline-dark");
-                        btn.classList.add("btn-outline-light");
-                        btn.textContent = "Светлая";
-                    }
-                }
-                const init = localStorage.getItem(key) || "dark";
-                apply(init);
-                btn.addEventListener("click", () => {
-                    const next =
-                        root.getAttribute("data-theme") === "dark"
-                            ? "light"
-                            : "dark";
-                    localStorage.setItem(key, next);
-                    apply(next);
-                });
-            })();
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+      <a href="{{ url_for('index') }}" class="back-button">← Analyze Another Pair</a>
+    </div>
+  </body>
 </html>
