@@ -7,7 +7,10 @@ import uuid
 import subprocess
 from pathlib import Path
 from typing import Dict, Any, Tuple, Optional
-
+import plotly.graph_objs as go
+import plotly.utils as pyjson
+from plotly.utils import PlotlyJSONEncoder
+from plotly.utils import PlotlyJSONEncoder
 from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 
@@ -256,6 +259,7 @@ def analyze_one(tmp: Path, filename: str) -> dict[str, any]:
     pylint_res = run_pylint(Path(filename), cwd=tmp)
     results["pylint_score"] = round(pylint_res.get("score", 0.0), 2)
     results["pylint_error"] = pylint_res.get("error")
+    results["pylint_error_count"] = int(pylint_res.get("error_count", 0))  # <-- добавили счётчик
 
     # Radon MI analysis
     radon_res = run_radon_mi(Path(filename), cwd=tmp)
@@ -291,6 +295,36 @@ def analyze_one(tmp: Path, filename: str) -> dict[str, any]:
     print(f"Analysis completed for {filename}: {results}")
     return results
 
+def create_metrics_table(results):
+    headers = [
+        "Type", "Repo", "Filename", "Pylint Score", "Pylint Errors", 
+        "Radon MI", "Bandit Vulns", "Model Confidence", "Final Score"
+    ]
+
+    cells = [
+        [r.get("type", "") for r in results],
+        [r.get("repo", "") for r in results],
+        [r.get("filename", "") for r in results],
+        [r.get("pylint_score", "") for r in results],
+        [r.get("radon_mi", "") for r in results],
+        [r.get("bandit_vulns", "") for r in results],
+        [r.get("pylint_error_count", 0) for r in results], 
+        [r.get("model_confidence", "") for r in results],
+        [r.get("final_score", "") for r in results],
+    ]
+
+    table = go.Figure(data=[go.Table(
+        header=dict(values=headers, fill_color='lightgrey', align='left'),
+        cells=dict(values=cells, align='left', fill_color='white', height=30))
+    ])
+
+    table.update_layout(
+        width=1200,
+        height=400,
+        margin=dict(l=20, r=20, t=30, b=30),
+        template="plotly_white"
+    )
+    return table
 
 @app.route("/")
 def index():
@@ -352,6 +386,139 @@ def analyze():
             shutil.rmtree(session_dir, ignore_errors=True)
         except Exception:
             pass
+
+@app.route('/analyze_dataset', methods=['GET', 'POST'])
+def analyze_dataset():
+    if request.method == 'GET':
+        # Показываем форму загрузки JSON файла
+        return render_template('upload_dataset.html')
+
+    if request.method == 'POST':
+        file = request.files.get('dataset_file')
+        if not file:
+            return "No file uploaded", 400
+
+        try:
+            dataset = json.load(file)
+            if not isinstance(dataset, list):
+                return "Invalid dataset format, should be a list", 400
+        except Exception as e:
+            return f"Invalid JSON: {str(e)}", 400
+
+        results = []
+        csv_results = []
+
+
+        for i, item in enumerate(dataset):
+            with tempfile.TemporaryDirectory() as tmpdir:
+                tmp_path = Path(tmpdir)
+
+                # --- Human code analysis ---
+                human_path = write_code_to_file(tmp_path, f"human_{i}.py", item["human_code"])
+                human_filename = human_path.name
+                human_res = analyze_one(tmp_path, human_path.name)
+                human_res["type"] = "Human"
+                human_res["repo"] = item.get("repo", f"repo_{i}")
+                human_res["filename"] = human_filename
+                human_res["index"] = i
+                results.append(human_res)
+
+                # --- AI code analysis ---
+                ai_path = write_code_to_file(tmp_path, f"ai_{i}.py", item["ai_code"])
+                ai_res = analyze_one(tmp_path, ai_path.name)
+                ai_res["type"] = "AI" 
+                ai_res["repo"] = item.get("repo", f"repo_{i}")
+                ai_res["index"] = i
+                results.append(ai_res)
+
+                # Объединяем результаты в одну запись
+                combined_res = {
+                    "pair_index": i,
+                    "repo": item["repo"], 
+                    "human_filename": item["path"], 
+                    "human_pylint_score": human_res.get("pylint_score"),
+                    "human_pylint_error_count": human_res.get("pylint_error_count"),
+                    "human_radon_mi": human_res.get("radon_mi"),
+                    "human_bandit_vulns": human_res.get("bandit_vulns"),
+                    "human_model_confidence": human_res.get("model_confidence"),
+                    "human_final_score": human_res.get("final_score"),
+                    "ai_pylint_score": ai_res.get("pylint_score"),
+                    "ai_pylint_error_count": ai_res.get("pylint_error_count"),
+                    "ai_radon_mi": ai_res.get("radon_mi"),
+                    "ai_bandit_vulns": ai_res.get("bandit_vulns"),
+                    "ai_model_confidence": ai_res.get("model_confidence"),
+                    "ai_final_score": ai_res.get("final_score"),
+                }
+
+                results.append(human_res)
+                results.append(ai_res)
+                csv_results.append(combined_res)  # combined_res идет только в csv_results
+
+        # --------------------------
+        # 📌 Сохранение в CSV файл
+        # --------------------------
+        import csv
+        output_dir = Path("static/results")
+        output_dir.mkdir(parents=True, exist_ok=True)
+        csv_path = output_dir / "dataset_results.csv"
+
+        csv_headers = [
+            "pair_index", "repo", "human_filename",
+            "human_pylint_score", "human_pylint_error_count", "human_radon_mi",
+            "human_bandit_vulns", "human_model_confidence", "human_final_score",
+            "ai_pylint_score", "ai_pylint_error_count", "ai_radon_mi",
+            "ai_bandit_vulns", "ai_model_confidence", "ai_final_score",
+        ]
+
+        with open(csv_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=csv_headers)
+            writer.writeheader()
+            for r in csv_results:
+                writer.writerow(r)
+
+        print(f"CSV saved: {csv_path}")
+
+        # Для графика: сделаем кривые с оценками final_score по индексам
+        x_values = list(range(len(dataset)))
+
+        human_scores = [r["final_score"] for r in results if r["type"] == "Human"]
+        ai_scores = [r["final_score"] for r in results if r["type"] == "AI"]
+
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=x_values,
+            y=human_scores,
+            mode='lines+markers',
+            name='Human Code',
+            line=dict(color='green')
+        ))
+        fig.add_trace(go.Scatter(
+            x=x_values,
+            y=ai_scores,
+            mode='lines+markers',
+            name='AI Code',
+            line=dict(color='blue')
+        ))
+
+        fig.update_layout(
+            title="Overall Code Quality Comparison",
+            xaxis_title="Sample Index",
+            yaxis=dict(title="Final Score (0-100)", range=[0, 100]),
+            width=1200,
+            height=600,
+            margin=dict(l=60, r=60, t=50, b=50),
+            template="plotly_white"
+        )
+
+        chart_json = json.dumps(fig, cls=PlotlyJSONEncoder)
+
+        # Создаем таблицу и json для неё
+        table_fig = create_metrics_table(results)
+        table_json = json.dumps(table_fig, cls=PlotlyJSONEncoder)
+
+        return render_template('chart.html', chartJSON=chart_json, tableJSON=table_json, results=results)
+
+
 
 
 if __name__ == "__main__":
