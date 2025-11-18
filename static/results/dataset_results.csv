@@ -1,0 +1,13 @@
+pair_index,repo,human_filename,human_pylint_score,human_pylint_error_count,human_radon_mi,human_bandit_vulns,human_model_confidence,human_final_score,ai_pylint_score,ai_pylint_error_count,ai_radon_mi,ai_bandit_vulns,ai_model_confidence,ai_final_score
+0,marimo-team/marimo,dagger/src/main/frontend.py,0.0,3,100.0,0,89.34,63.93,0.0,3,100.0,0,89.34,63.93
+1,Yaworkz/KeyAuth-Login-Script-Loader,main.py,0.0,128,55.15,1,98.08,23.6,0.0,1,0.0,0,90.03,39.0
+2,phishdestroy/destroylist,community/dns_validator.py,8.67,21,37.97,0,98.36,79.67,0.0,1,0.0,0,96.55,39.66
+3,phishdestroy/destroylist,count_domains.py,6.67,2,100.0,0,79.98,86.34,6.67,2,100.0,0,86.65,87.01
+4,phishdestroy/destroylist,dns/active_domains.py,8.64,23,31.29,0,98.43,77.91,0.0,1,0.0,0,94.08,39.41
+5,phishdestroy/destroylist,smart_aggregator.py,9.45,12,19.75,0,98.55,77.87,0.0,1,0.0,0,71.01,37.1
+6,lupinjia/genesis_lr,legged_gym/__init__.py,0.0,5,84.61,0,61.34,57.29,0.0,5,84.61,0,88.27,59.98
+7,lupinjia/genesis_lr,legged_gym/envs/__init__.py,0.0,19,100.0,0,94.76,64.48,0.0,19,100.0,0,89.67,63.97
+8,lupinjia/genesis_lr,legged_gym/envs/base/base_config.py,10.0,0,98.04,0,73.57,96.87,10.0,0,97.87,0,90.49,98.52
+9,lupinjia/genesis_lr,legged_gym/envs/base/base_task.py,7.05,5,66.92,0,63.57,77.76,7.05,5,66.92,0,78.32,79.24
+10,lupinjia/genesis_lr,legged_gym/envs/base/legged_robot_config.py,9.77,1,60.51,0,96.22,88.94,8.75,3,42.63,0,75.04,78.79
+,,,,,,,,,,,,,,
