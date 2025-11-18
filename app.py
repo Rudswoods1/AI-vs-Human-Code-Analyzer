@@ -405,9 +405,7 @@ def analyze_dataset():
         except Exception as e:
             return f"Invalid JSON: {str(e)}", 400
 
-        results = []
         csv_results = []
-
 
         for i, item in enumerate(dataset):
             with tempfile.TemporaryDirectory() as tmpdir:
@@ -415,27 +413,17 @@ def analyze_dataset():
 
                 # --- Human code analysis ---
                 human_path = write_code_to_file(tmp_path, f"human_{i}.py", item["human_code"])
-                human_filename = human_path.name
                 human_res = analyze_one(tmp_path, human_path.name)
-                human_res["type"] = "Human"
-                human_res["repo"] = item.get("repo", f"repo_{i}")
-                human_res["filename"] = human_filename
-                human_res["index"] = i
-                results.append(human_res)
 
                 # --- AI code analysis ---
                 ai_path = write_code_to_file(tmp_path, f"ai_{i}.py", item["ai_code"])
                 ai_res = analyze_one(tmp_path, ai_path.name)
-                ai_res["type"] = "AI" 
-                ai_res["repo"] = item.get("repo", f"repo_{i}")
-                ai_res["index"] = i
-                results.append(ai_res)
 
                 # Объединяем результаты в одну запись
                 combined_res = {
                     "pair_index": i,
-                    "repo": item["repo"], 
-                    "human_filename": item["path"], 
+                    "repo": item.get("repo", f"repo_{i}"), 
+                    "human_filename": item.get("path", f"file_{i}.py"), 
                     "human_pylint_score": human_res.get("pylint_score"),
                     "human_pylint_error_count": human_res.get("pylint_error_count"),
                     "human_radon_mi": human_res.get("radon_mi"),
@@ -449,10 +437,7 @@ def analyze_dataset():
                     "ai_model_confidence": ai_res.get("model_confidence"),
                     "ai_final_score": ai_res.get("final_score"),
                 }
-
-                results.append(human_res)
-                results.append(ai_res)
-                csv_results.append(combined_res)  # combined_res идет только в csv_results
+                csv_results.append(combined_res)
 
         # --------------------------
         # 📌 Сохранение в CSV файл
@@ -478,45 +463,38 @@ def analyze_dataset():
 
         print(f"CSV saved: {csv_path}")
 
-        # Для графика: сделаем кривые с оценками final_score по индексам
-        x_values = list(range(len(dataset)))
+        # --------------------------
+        # 📊 Вычисление средних значений
+        # --------------------------
+        def safe_mean(values):
+            """Вычисляет среднее, игнорируя None значения"""
+            filtered = [v for v in values if v is not None]
+            return sum(filtered) / len(filtered) if filtered else 0
 
-        human_scores = [r["final_score"] for r in results if r["type"] == "Human"]
-        ai_scores = [r["final_score"] for r in results if r["type"] == "AI"]
+        human_metrics = {
+            "pylint_score": safe_mean([r["human_pylint_score"] for r in csv_results]),
+            "pylint_error_count": safe_mean([r["human_pylint_error_count"] for r in csv_results]),
+            "radon_mi": safe_mean([r["human_radon_mi"] for r in csv_results]),
+            "bandit_vulns": safe_mean([r["human_bandit_vulns"] for r in csv_results]),
+            "model_confidence": safe_mean([r["human_model_confidence"] for r in csv_results]),
+            "final_score": safe_mean([r["human_final_score"] for r in csv_results]),
+        }
 
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(
-            x=x_values,
-            y=human_scores,
-            mode='lines+markers',
-            name='Human Code',
-            line=dict(color='green')
-        ))
-        fig.add_trace(go.Scatter(
-            x=x_values,
-            y=ai_scores,
-            mode='lines+markers',
-            name='AI Code',
-            line=dict(color='blue')
-        ))
+        ai_metrics = {
+            "pylint_score": safe_mean([r["ai_pylint_score"] for r in csv_results]),
+            "pylint_error_count": safe_mean([r["ai_pylint_error_count"] for r in csv_results]),
+            "radon_mi": safe_mean([r["ai_radon_mi"] for r in csv_results]),
+            "bandit_vulns": safe_mean([r["ai_bandit_vulns"] for r in csv_results]),
+            "model_confidence": safe_mean([r["ai_model_confidence"] for r in csv_results]),
+            "final_score": safe_mean([r["ai_final_score"] for r in csv_results]),
+        }
 
-        fig.update_layout(
-            title="Overall Code Quality Comparison",
-            xaxis_title="Sample Index",
-            yaxis=dict(title="Final Score (0-100)", range=[0, 100]),
-            width=1200,
-            height=600,
-            margin=dict(l=60, r=60, t=50, b=50),
-            template="plotly_white"
-        )
+        total_samples = len(csv_results)
 
-        chart_json = json.dumps(fig, cls=PlotlyJSONEncoder)
-
-        # Создаем таблицу и json для неё
-        table_fig = create_metrics_table(results)
-        table_json = json.dumps(table_fig, cls=PlotlyJSONEncoder)
-
-        return render_template('chart.html', chartJSON=chart_json, tableJSON=table_json, results=results)
+        return render_template('results_summary.html', 
+                             human_metrics=human_metrics, 
+                             ai_metrics=ai_metrics,
+                             total_samples=total_samples)
 
 
 
