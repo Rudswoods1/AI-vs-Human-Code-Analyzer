@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dataset Analysis Results - AI vs Human Code Analyzer</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+
+    <style>
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        margin: 0;
+        padding: 40px 20px;
+      }
+
+      .results-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .results-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 42px;
+        font-weight: 700;
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .results-subtitle {
+        font-family: 'PT Sans', sans-serif;
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.9);
+        text-align: center;
+        margin-bottom: 50px;
+      }
+
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 40px;
+      }
+
+      .result-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .result-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .card-icon {
+        font-size: 42px;
+        margin-right: 15px;
+      }
+
+      .card-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 28px;
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+
+      .metrics-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .metric-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 0;
+        border-bottom: 1px solid #f5f5f5;
+      }
+
+      .metric-item:last-child {
+        border-bottom: none;
+      }
+
+      .metric-label {
+        font-family: 'PT Sans', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: #666;
+      }
+
+      .metric-value {
+        font-family: 'Poppins', sans-serif;
+        font-size: 20px;
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+
+      .info-tooltip {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background: #2196f3;
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        font-size: 11px;
+        line-height: 16px;
+        margin-left: 5px;
+        cursor: help;
+      }
+
+      .comparison-card {
+        grid-column: 1 / -1;
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        margin-bottom: 30px;
+      }
+
+      .comparison-header {
+        font-family: 'Poppins', sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        color: #1a1a1a;
+        text-align: center;
+        margin-bottom: 35px;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+      }
+
+      .comparison-table thead th {
+        font-family: 'Poppins', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: #666;
+        padding: 15px;
+        text-align: center;
+        background: #f8f9fa;
+        border-radius: 10px;
+      }
+
+      .comparison-table thead th:first-child {
+        text-align: left;
+        border-radius: 10px 0 0 10px;
+      }
+
+      .comparison-table thead th:last-child {
+        border-radius: 0 10px 10px 0;
+      }
+
+      .comparison-table tbody tr {
+        background: #ffffff;
+      }
+
+      .comparison-table tbody td {
+        font-family: 'PT Sans', sans-serif;
+        padding: 18px 15px;
+        text-align: center;
+        font-size: 15px;
+        border-top: 1px solid #f0f0f0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .comparison-table tbody td:first-child {
+        text-align: left;
+        font-weight: 600;
+        color: #1a1a1a;
+        border-left: 1px solid #f0f0f0;
+        border-radius: 10px 0 0 10px;
+      }
+
+      .comparison-table tbody td:last-child {
+        border-right: 1px solid #f0f0f0;
+        border-radius: 0 10px 10px 0;
+      }
+
+      .value-human {
+        background: #fff3e0;
+        color: #ff6f00;
+        font-weight: 700;
+        padding: 8px 16px;
+        border-radius: 20px;
+        display: inline-block;
+      }
+
+      .value-ai {
+        background: #e8f5e9;
+        color: #00c853;
+        font-weight: 700;
+        padding: 8px 16px;
+        border-radius: 20px;
+        display: inline-block;
+      }
+
+      .diff-positive {
+        background: #e8f5e9;
+        color: #00c853;
+        font-weight: 700;
+        padding: 8px 16px;
+        border-radius: 20px;
+        display: inline-block;
+      }
+
+      .diff-negative {
+        background: #ffebee;
+        color: #d32f2f;
+        font-weight: 700;
+        padding: 8px 16px;
+        border-radius: 20px;
+        display: inline-block;
+      }
+
+      .diff-neutral {
+        background: #f5f5f5;
+        color: #666;
+        font-weight: 700;
+        padding: 8px 16px;
+        border-radius: 20px;
+        display: inline-block;
+      }
+
+      .stats-footer {
+        text-align: center;
+        color: #ffffff;
+        margin-top: 30px;
+      }
+
+      .stats-footer p {
+        font-family: 'PT Sans', sans-serif;
+        font-size: 18px;
+        margin: 10px 0;
+      }
+
+      .stats-footer strong {
+        font-weight: 700;
+      }
+
+      .back-button {
+        display: inline-block;
+        margin: 20px 10px 0;
+        padding: 15px 35px;
+        background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+        color: #667eea;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 30px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .back-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        color: #764ba2;
+      }
+
+      @media (max-width: 968px) {
+        .comparison-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .results-title {
+          font-size: 32px;
+        }
+
+        .comparison-header {
+          font-size: 24px;
+        }
+
+        .comparison-table {
+          font-size: 13px;
+        }
+
+        .comparison-table tbody td,
+        .comparison-table thead th {
+          padding: 12px 8px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="results-container">
+      <h1 class="results-title">📊 Dataset Analysis Results</h1>
+      <p class="results-subtitle">Average metrics across {{ total_samples }} code samples</p>
+
+      <div class="comparison-grid">
+        <!-- Human Code Card -->
+        <div class="result-card">
+          <div class="card-header">
+            <div class="card-icon">👨‍💻</div>
+            <h2 class="card-title">Human Code</h2>
+          </div>
+
+          <ul class="metrics-list">
+            <li class="metric-item">
+              <span class="metric-label">
+                Pylint Score
+                <span class="info-tooltip" title="Code quality score (0-10). Checks for errors, warnings, and style issues">?</span>
+              </span>
+              <span class="metric-value">{{ "%.2f"|format(human_metrics.pylint_score) }} / 10</span>
+            </li>
+
+            <li class="metric-item">
+              <span class="metric-label">
+                Pylint Errors
+                <span class="info-tooltip" title="Average number of errors found">?</span>
+              </span>
+              <span class="metric-value" style="color: #ff6f00;">{{ "%.2f"|format(human_metrics.pylint_error_count) }}</span>
+            </li>
+
+            <li class="metric-item">
+              <span class="metric-label">
+                Maintainability Index
+                <span class="info-tooltip" title="Maintainability Index (0-100). Higher is better">?</span>
+              </span>
+              <span class="metric-value">{{ "%.2f"|format(human_metrics.radon_mi) }}</span>
+            </li>
+
+            <li class="metric-item">
+              <span class="metric-label">
+                Security Vulnerabilities
+                <span class="info-tooltip" title="Average number of vulnerabilities found by Bandit">?</span>
+              </span>
+              <span class="metric-value" style="color: #d32f2f;">{{ "%.2f"|format(human_metrics.bandit_vulns) }}</span>
+            </li>
+
+            <li class="metric-item">
+              <span class="metric-label">
+                Model Confidence
+                <span class="info-tooltip" title="How confident the model is in its prediction">?</span>
+              </span>
+              <span class="metric-value">{{ "%.2f"|format(human_metrics.model_confidence) }}%</span>
+            </li>
+
+            <li class="metric-item">
+              <span class="metric-label">
+                <strong>Overall Quality</strong>
+                <span class="info-tooltip" title="Combined score based on all metrics">?</span>
+              </span>
+              <span class="metric-value" style="color: #00c853; font-size: 24px;">{{ "%.2f"|format(human_metrics.final_score) }} / 100</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- AI Code Card -->
+        <div class="result-card">
+          <div class="card-header">
+            <div class="card-icon">🤖</div>
+            <h2 class="card-title">AI Code</h2>
+          </div>
+
+          <ul class="metrics-list">
+            <li class="metric-item">
+              <span class="metric-label">
+                Pylint Score
+                <span class="info-tooltip" title="Code quality score (0-10). Checks for errors, warnings, and style issues">?</span>
+              </span>
+              <span class="metric-value">{{ "%.2f"|format(ai_metrics.pylint_score) }} / 10</span>
+            </li>
+
+            <li class="metric-item">
+              <span class="metric-label">
+                Pylint Errors
+                <span class="info-tooltip" title="Average number of errors found">?</span>
+              </span>
+              <span class="metric-value" style="color: #ff6f00;">{{ "%.2f"|format(ai_metrics.pylint_error_count) }}</span>
+            </li>
+
+            <li class="metric-item">
+              <span class="metric-label">
+                Maintainability Index
+                <span class="info-tooltip" title="Maintainability Index (0-100). Higher is better">?</span>
+              </span>
+              <span class="metric-value">{{ "%.2f"|format(ai_metrics.radon_mi) }}</span>
+            </li>
+
+            <li class="metric-item">
+              <span class="metric-label">
+                Security Vulnerabilities
+                <span class="info-tooltip" title="Average number of vulnerabilities found by Bandit">?</span>
+              </span>
+              <span class="metric-value" style="color: #d32f2f;">{{ "%.2f"|format(ai_metrics.bandit_vulns) }}</span>
+            </li>
+
+            <li class="metric-item">
+              <span class="metric-label">
+                Model Confidence
+                <span class="info-tooltip" title="How confident the model is in its prediction">?</span>
+              </span>
+              <span class="metric-value">{{ "%.2f"|format(ai_metrics.model_confidence) }}%</span>
+            </li>
+
+            <li class="metric-item">
+              <span class="metric-label">
+                <strong>Overall Quality</strong>
+                <span class="info-tooltip" title="Combined score based on all metrics">?</span>
+              </span>
+              <span class="metric-value" style="color: #00c853; font-size: 24px;">{{ "%.2f"|format(ai_metrics.final_score) }} / 100</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="comparison-card">
+          <h3 class="comparison-header">📈 Head-to-Head Comparison</h3>
+          
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>👨‍💻 Human</th>
+                <th>🤖 AI</th>
+                <th>Difference</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Pylint Score</td>
+                <td><span class="value-human">{{ "%.2f"|format(human_metrics.pylint_score) }}</span></td>
+                <td><span class="value-ai">{{ "%.2f"|format(ai_metrics.pylint_score) }}</span></td>
+                <td>
+                  {% set diff = ai_metrics.pylint_score - human_metrics.pylint_score %}
+                  <span class="{% if diff > 0 %}diff-positive{% elif diff < 0 %}diff-negative{% else %}diff-neutral{% endif %}">
+                    {{ "%+.2f"|format(diff) }}
+                  </span>
+                </td>
+              </tr>
+
+              <tr>
+                <td>Pylint Errors</td>
+                <td><span class="value-human">{{ "%.2f"|format(human_metrics.pylint_error_count) }}</span></td>
+                <td><span class="value-ai">{{ "%.2f"|format(ai_metrics.pylint_error_count) }}</span></td>
+                <td>
+                  {% set diff = ai_metrics.pylint_error_count - human_metrics.pylint_error_count %}
+                  <span class="{% if diff < 0 %}diff-positive{% elif diff > 0 %}diff-negative{% else %}diff-neutral{% endif %}">
+                    {{ "%+.2f"|format(diff) }}
+                  </span>
+                </td>
+              </tr>
+
+              <tr>
+                <td>Maintainability Index</td>
+                <td><span class="value-human">{{ "%.2f"|format(human_metrics.radon_mi) }}</span></td>
+                <td><span class="value-ai">{{ "%.2f"|format(ai_metrics.radon_mi) }}</span></td>
+                <td>
+                  {% set diff = ai_metrics.radon_mi - human_metrics.radon_mi %}
+                  <span class="{% if diff > 0 %}diff-positive{% elif diff < 0 %}diff-negative{% else %}diff-neutral{% endif %}">
+                    {{ "%+.2f"|format(diff) }}
+                  </span>
+                </td>
+              </tr>
+
+              <tr>
+                <td>Security Vulnerabilities</td>
+                <td><span class="value-human">{{ "%.2f"|format(human_metrics.bandit_vulns) }}</span></td>
+                <td><span class="value-ai">{{ "%.2f"|format(ai_metrics.bandit_vulns) }}</span></td>
+                <td>
+                  {% set diff = ai_metrics.bandit_vulns - human_metrics.bandit_vulns %}
+                  <span class="{% if diff < 0 %}diff-positive{% elif diff > 0 %}diff-negative{% else %}diff-neutral{% endif %}">
+                    {{ "%+.2f"|format(diff) }}
+                  </span>
+                </td>
+              </tr>
+
+              <tr>
+                <td>Model Confidence</td>
+                <td><span class="value-human">{{ "%.2f"|format(human_metrics.model_confidence) }}%</span></td>
+                <td><span class="value-ai">{{ "%.2f"|format(ai_metrics.model_confidence) }}%</span></td>
+                <td>
+                  {% set diff = ai_metrics.model_confidence - human_metrics.model_confidence %}
+                  <span class="{% if diff > 0 %}diff-positive{% elif diff < 0 %}diff-negative{% else %}diff-neutral{% endif %}">
+                    {{ "%+.2f"|format(diff) }}%
+                  </span>
+                </td>
+              </tr>
+
+              <tr style="background: #f8f9fa;">
+                <td style="font-weight: 700; font-size: 16px;"><strong>Overall Quality</strong></td>
+                <td><span class="value-human" style="font-size: 18px;">{{ "%.2f"|format(human_metrics.final_score) }}</span></td>
+                <td><span class="value-ai" style="font-size: 18px;">{{ "%.2f"|format(ai_metrics.final_score) }}</span></td>
+                <td>
+                  {% set diff = ai_metrics.final_score - human_metrics.final_score %}
+                  <span class="{% if diff > 0 %}diff-positive{% elif diff < 0 %}diff-negative{% else %}diff-neutral{% endif %}" style="font-size: 18px;">
+                    {{ "%+.2f"|format(diff) }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="stats-footer">
+        <p>✅ Analysis completed successfully!</p>
+        <p>Results saved to: <strong>static/results/dataset_results.csv</strong></p>
+        <div style="margin-top: 20px;">
+          <a href="{{ url_for('index') }}" class="back-button">← Analyze Another Pair</a>
+          <a href="{{ url_for('analyze_dataset') }}" class="back-button">📊 Upload New Dataset</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
