@@ -178,7 +178,7 @@
       .back-button {
         display: block;
         width: 200px;
-        margin: 40px auto;
+        margin: 40px auto 0;
         padding: 15px 30px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
@@ -194,6 +194,10 @@
       .back-button:hover {
         transform: scale(1.05);
         box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+      }
+
+      .secondary-button {
+        background: linear-gradient(135deg, #00bcd4 0%, #009688 100%);
       }
 
       @media (max-width: 968px) {
@@ -325,6 +329,8 @@
       </div>
 
       <a href="{{ url_for('index') }}" class="back-button">← Analyze Another Pair</a>
+      <a href="{{ url_for('analyze_dataset') }}" class="back-button">Upload Dataset for Chart</a>
+
     </div>
   </body>
 </html>
