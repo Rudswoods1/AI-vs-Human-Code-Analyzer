@@ -1,0 +1,102 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f9fb;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    text-align: center;
+    color: #1976d2;
+    margin-bottom: 20px;
+}
+
+.result-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    background-color: #fafafa;
+}
+
+.metrics p {
+    margin: 6px 0;
+    font-size: 15px;
+}
+
+.metric-value {
+    font-weight: bold;
+    color: #1976d2;
+}
+
+.vuln-danger {
+    color: #d32f2f;
+}
+
+.vuln-safe {
+    color: #00c853;
+}
+
+.vuln-warning {
+    color: #ffa000;
+}
+
+h3 {
+    margin-top: 25px;
+    color: #1565c0;
+}
+
+.issues-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.issue-item {
+    background: #f5f5f5;
+    margin: 6px 0;
+    padding: 8px 10px;
+    border-radius: 6px;
+}
+
+.issue-severity {
+    font-weight: bold;
+}
+
+.issue-location {
+    font-size: 13px;
+    color: #777;
+    margin-left: 5px;
+}
+
+.no-issues {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.back-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: white;
+    background: #1976d2;
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+
+.back-button:hover {
+    background: #1565c0;
+}
