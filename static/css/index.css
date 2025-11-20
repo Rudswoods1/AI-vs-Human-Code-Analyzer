@@ -1,0 +1,572 @@
+.design-light-ui-container1 {
+  width: 100%;
+  display: flex;
+  overflow: auto;
+  min-height: 100vh;
+  align-items: center;
+  flex-direction: column;
+}
+ 
+.design-light-ui-design-light-ui {
+  width: 100vw;            /* на всю ширину экрана */
+  height: 100vh;           /* на всю высоту экрана */
+  display: flex;
+  position: relative;
+  align-items: flex-start;
+  justify-content: center; /* по желанию */
+  margin: 0;
+  padding: 0;
+  overflow: hidden;        /* обрезает всё, что выходит */
+  background: black;       /* чтобы не было белого под фоном */
+}
+
+ 
+.design-light-ui-yuema-dw46bt-g90-xgunsplash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;      /* растягивает фон без искажений */
+  object-position: center;
+  display: block;
+}
+
+ 
+.design-light-ui-rectangle5 {
+  position: fixed;         /* фиксируем фоном */
+  top: 0;
+  left: 0;
+  width: 100vw;            /* во всю ширину окна */
+  height: 100vh;           /* во всю высоту окна */
+  object-fit: cover;       /* заполняет фон без искажений */
+  object-position: center; /* центрирует изображение */
+  display: block;
+  z-index: 1;             /* ниже остальных элементов */
+  margin: 0;
+  padding: 0;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+.design-light-ui-title {
+  position: absolute;
+  top: calc(50% - 377px / 2 - 300px); /* выравнивает заголовок над боксом */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1052px; /* равен ширине analyze-box */
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 64px;
+  font-weight: 600;
+  background: linear-gradient(90deg, #73BFF2 0%, #CFCFCF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(115, 191, 242, 0.2);
+  margin: 0;
+  z-index: 10;
+}
+.design-light-ui-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 64px;
+  font-weight: 600;
+  text-align: center;
+  margin: 270px auto 40px auto; /* 👈 отступ сверху, чтобы не залезал в хедер */
+  width: 1052px; /* как analyze-box */
+  background: linear-gradient(90deg, #73BFF2 0%, #CFCFCF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+ 
+.design-light-uiai-analyze-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* центрирует блок */
+  width: 1052px;
+  height: 377px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center; /* если нужно центрировать контент внутри */
+  flex-shrink: 1;
+  background: linear-gradient(135deg, rgba(170, 170, 170, 0.212) 0%, rgba(136, 136, 136, 0.192) 100%);
+  backdrop-filter: blur(6px) saturate(30%);
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  overflow: hidden;
+  outline: 1px solid rgb(255, 255, 255);
+  z-index: 5; /* чтобы было над фоном */
+  margin-top: 100px;
+}
+
+ 
+.design-light-ui-text10 {
+  top: 41px;
+  left: 66px;
+  color: rgba(51, 51, 51, 1);
+  height: auto;
+  position: absolute;
+  font-size: 24px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Poppins;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+ 
+.design-light-ui-ellipse1 {
+  top: 41px;
+  left: 942px;
+  width: 41px;
+  height: 41px;
+  position: absolute;
+}
+ 
+.design-light-ui-humancode {
+  top: 116px;
+  left: 66px;
+  width: 453px;
+  height: 220px;
+  display: flex;
+  position: absolute;
+  align-items: flex-start;
+  flex-shrink: 1;
+  background-color: rgba(243, 243, 243, 1);
+  border-radius: 40px;
+  overflow: hidden;
+}
+ 
+.design-light-ui-text11 {
+  top: 31px;
+  left: 27px;
+  color: rgb(146, 146, 146);
+  height: auto;
+  opacity: 0.70;
+  position: absolute;
+  font-size: 16px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Poppins;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+ 
+.design-light-ui-line11 {
+  top: 168px;
+  left: 0px;
+  width: 453px;
+  height: 1px;
+  position: absolute;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+ 
+.design-light-ui-icons83011 {
+  top: 181px;
+  left: 27px;
+  width: 27px;
+  height: 27px;
+  opacity: 0.70;
+  position: absolute;
+}
+ 
+.design-light-ui-text12 {
+  top: 184px;
+  left: 63px;
+  color: rgba(0, 0, 0, 1);
+  height: auto;
+  opacity: 0.70;
+  position: absolute;
+  font-size: 15px;
+  font-style: Regular;
+  text-align: left;
+  font-family: PT Sans;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+ 
+.design-light-ui-icons84811 {
+  top: 181px;
+  left: 345px;
+  width: 28px;
+  height: 28px;
+  opacity: 0.70;
+  position: absolute;
+}
+ 
+.design-light-ui-text13 {
+  top: 184px;
+  left: 381px;
+  color: rgba(0, 0, 0, 1);
+  height: auto;
+  opacity: 0.70;
+  position: absolute;
+  font-size: 15px;
+  font-style: Regular;
+  text-align: left;
+  font-family: PT Sans;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+ 
+.design-light-ui-aicode {
+  top: 116px;
+  left: 555px;
+  width: 453px;
+  height: 220px;
+  display: flex;
+  position: absolute;
+  align-items: flex-start;
+  flex-shrink: 1;
+  background-color: rgba(243, 243, 243, 1);
+  border-radius: 40px;
+  overflow: hidden;
+}
+ 
+.design-light-ui-text14 {
+  top: 31px;
+  left: 27px;
+  color: rgb(146, 146, 146);
+  height: auto;
+  opacity: 0.70;
+  position: absolute;
+  font-size: 16px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Poppins;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+ 
+.design-light-ui-line12 {
+  top: 168px;
+  left: 0px;
+  width: 453px;
+  height: 1px;
+  position: absolute;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+ 
+.design-light-ui-icons83012 {
+  top: 181px;
+  left: 27px;
+  width: 27px;
+  height: 27px;
+  opacity: 0.70;
+  position: absolute;
+}
+ 
+.design-light-ui-text15 {
+  top: 184px;
+  left: 63px;
+  color: rgba(0, 0, 0, 1);
+  height: auto;
+  opacity: 0.70;
+  position: absolute;
+  font-size: 15px;
+  font-style: Regular;
+  text-align: left;
+  font-family: PT Sans;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+ 
+.design-light-ui-icons84812 {
+  top: 181px;
+  left: 345px;
+  width: 28px;
+  height: 28px;
+  opacity: 0.70;
+  position: absolute;
+}
+ 
+.design-light-ui-text16 {
+  top: 184px;
+  left: 381px;
+  color: rgba(0, 0, 0, 1);
+  height: auto;
+  opacity: 0.70;
+  position: absolute;
+  font-size: 15px;
+  font-style: Regular;
+  text-align: left;
+  font-family: PT Sans;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+ 
+.design-light-ui-icons8right241 {
+  top: 49px;
+  left: 950px;
+  width: 26px;
+  height: 26px;
+  position: absolute;
+}
+ 
+.design-light-ui-footer {
+  top: 42.7266845703125px;
+  left: 317px;
+  width: 1235.957275390625px;
+  height: 51.27336502075195px;
+  display: flex;
+  position: absolute;
+  align-items: flex-start;
+  flex-shrink: 1;
+}
+ 
+.design-light-ui-sign-up-block1 {
+  top: -0.000049114227294921875px;
+  left: 947.9392700195312px;
+  width: 172.80081176757812px;
+  height: 51.27336502075195px;
+  display: flex;
+  position: absolute;
+  align-items: flex-start;
+  flex-shrink: 1;
+  background-color: rgba(228, 228, 228, 0.5);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  gap: 10px; /* расстояние между элементами */
+}
+ 
+.design-light-ui-text17 {
+  top: 12.593408584594727px;
+  left: 26.176910400390625px;
+  color: rgba(0, 0, 0, 1);
+  width: 60px;
+  height: auto;
+  position: absolute;
+  font-size: 18px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Poppins;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+
+.design-light-ui-divider {
+  font-size: 16px;
+  color: rgb(175 174 174 / 39%);
+  margin: 16px 100px;
+  line-height: 1;
+}
+ 
+.design-light-ui-icons84813 {
+  top: 12.593408584594727px;
+  left: 115.58455657958984px;
+  width: 27px;
+  height: 27px;
+  position: absolute;
+}
+ 
+.design-light-ui-icons83013 {
+  top: 21.053430557250977px;
+  left: 147.8943328857422px;
+  width: 12px;
+  height: 12px;
+  position: absolute;
+}
+ 
+.design-light-ui-sign-up-block2 {
+  top: 0px;
+  left: 0px;
+  width: 172.80081176757812px;
+  height: 51.27336502075195px;
+  display: flex;
+  position: absolute;
+  align-items: flex-start;
+  flex-shrink: 1;
+  background-color: rgba(228, 228, 228, 0.5);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+ 
+.design-light-ui-text18 {
+  top: 12px;
+  left: 67px;
+  color: rgba(0, 0, 0, 1);
+  width: 90px;
+  height: auto;
+  opacity: 0.70;
+  position: absolute;
+  font-size: 18px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Poppins;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+ 
+.design-light-ui-dark-lighttheme {
+  top: 0px;
+  left: 1172px;
+  width: 63.95730209350586px;
+  height: 51.27336502075195px;
+  display: flex;
+  position: absolute;
+  align-items: flex-start;
+  flex-shrink: 1;
+}
+
+.design-light-ui-rectangle6 {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* центрирование */
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+ 
+.design-light-ui-icons85011 {
+  top: 9.894810676574707px;
+  left: 15.382509231567383px;
+  width: 32px;
+  height: 32px;
+  position: absolute;
+}
+ 
+.design-light-ui-search-box {
+  position: absolute;
+  top: 0;
+  left: 213px;
+  width: 466.85px;
+  height: 51.27px;
+
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  /* визуал */
+  background: linear-gradient(
+    90deg,
+    rgba(228, 228, 228, 0.4) 0%,
+    rgba(126, 126, 126, 0.1) 100%
+  );
+  border-radius: 0.8em;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* иконка поиска */
+.design-light-ui-search-box .search_icon {
+  height: 1em;
+  padding: 0 0.5em 0 0.8em;
+  fill: #abb2bf;
+}
+
+/* само поле ввода */
+.design-light-ui-search-box .inputBox {
+  background-color: transparent;
+  color: #ffffff;
+  outline: none;
+  width: 100%;
+  border: 0;
+  padding: 0.5em 1.5em 0.5em 0;
+  font-size: 1em;
+}
+
+/* placeholder */
+.design-light-ui-search-box ::placeholder {
+  color: #abb2bf;
+}
+
+ 
+.design-light-ui-text19 {
+  top: 12.593408584594727px;
+  left: 70.72244262695312px;
+  color: rgba(0, 0, 0, 1);
+  width: 163px;
+  height: auto;
+  opacity: 0.25;
+  position: absolute;
+  font-size: 20px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Poppins;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+}
+ 
+.design-light-ui-icons85012 {
+  top: 12.593408584594727px;
+  left: 17.09112548828125px;
+  width: 27px;
+  height: 27px;
+  position: absolute;
+}
+ 
+.design-light-ui-icons8magento501 {
+  top: 55px;
+  left: 340px;
+  width: 27px;
+  height: 27px;
+  position: absolute;
+}
+ 
+.design-light-ui-link {
+  display: contents;
+}
+ 
+.design-light-ui-container2 {
+  right: 50px;
+  border: 1px solid #ffffff5c;
+  bottom: 30px;
+  display: flex;
+  z-index: 22;
+  position: fixed;
+  box-shadow: 5px 5px 10px 0px rgba(31, 31, 31, 0.4);
+  min-height: auto;
+  align-items: center;
+  padding-top: 8px;
+  padding-left: 12px;
+  border-radius: 8px;
+  padding-right: 12px;
+  padding-bottom: 8px;
+  backdrop-filter: blur(6px);
+  background-color: rgba(41, 41, 41, 0.41);
+}
+ 
+.design-light-ui-icon1 {
+  width: 24px;
+  margin-right: 4px;
+}
+ 
+.design-light-ui-text20 {
+  color: white;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+}
