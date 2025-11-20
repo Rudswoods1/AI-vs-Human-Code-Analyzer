@@ -1,5 +1,5 @@
 <img width="1920" height="966" alt="image" src="https://github.com/user-attachments/assets/f28039d0-8c46-4763-bc96-a7a0c2db2094" />
-<h1 align="center"><i>Home page(Light Theme) </i></h1>
+<h2 align="center"><i>Home page(Light Theme) </i></h2>
 <img width="1920" height="966" alt="image" src="https://github.com/user-attachments/assets/52867db7-9e2b-49aa-94db-a0611bab02fe" />
 <h1 align="center"><i>Home page(Dark Theme) </i></h1>
 <img width="1920" height="932" alt="image" src="https://github.com/user-attachments/assets/977d582a-78c6-4f58-9147-6017125a0c97" />
