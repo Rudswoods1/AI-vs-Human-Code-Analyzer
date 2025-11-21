@@ -83,7 +83,7 @@ Upload: - `human.py` - `ai.py`
 
 Or paste code into text fields.
 
-Press **Сравнить**, then view: - Pylint Score
+Press **Submit**, then view: - Pylint Score
 - Radon MI
 - Bandit Vulnerabilities
 - LSTM Prediction + Confidence
