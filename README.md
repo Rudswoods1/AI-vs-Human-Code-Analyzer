@@ -44,7 +44,7 @@ Upload a JSON dataset with multiple code pairs: - Analyzes each pair
 <img width="1920" src="https://github.com/user-attachments/assets/52867db7-9e2b-49aa-94db-a0611bab02fe">
 
 <h2 align="center"> Results: Code Analysis </h2>
-<img width="1459" src="https://github.com/user-attachments/assets/977d582a-78c6-4f58-9147-6017125a0c97">`{=html}
+<img width="1459" src="https://github.com/user-attachments/assets/977d582a-78c6-4f58-9147-6017125a0c97">
 
 <h2 align="center"> Results: Dataset Summary </h2>
 <img width="1459" src="https://github.com/user-attachments/assets/3b331a06-193e-41b4-b7fc-e7f85ae80150">
@@ -84,10 +84,10 @@ Upload: - `human.py` - `ai.py`
 Or paste code into text fields.
 
 Press **Сравнить**, then view: - Pylint Score\
-- Radon MI\
-- Bandit Vulnerabilities\
-- LSTM Prediction + Confidence\
-- Final Score\
+- Radon MI
+- Bandit Vulnerabilities
+- LSTM Prediction + Confidence
+- Final Score
 - Comparison Table
 
 ------------------------------------------------------------------------
