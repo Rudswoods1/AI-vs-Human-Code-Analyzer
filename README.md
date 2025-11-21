@@ -23,7 +23,7 @@ Upload two files or paste Python code directly.
 
 Upload a JSON dataset with multiple code pairs: - Analyzes each pair
 - Generates a `dataset_results.csv` file
-- Computes average metrics\
+- Computes average metrics
 - Displays summary statistics
 
 ### ✔ Clean Modern UI
@@ -83,7 +83,7 @@ Upload: - `human.py` - `ai.py`
 
 Or paste code into text fields.
 
-Press **Сравнить**, then view: - Pylint Score\
+Press **Сравнить**, then view: - Pylint Score
 - Radon MI
 - Bandit Vulnerabilities
 - LSTM Prediction + Confidence
@@ -107,39 +107,39 @@ Upload JSON in format:
 ]
 ```
 
-App will: - Analyze each pair\
-- Generate `dataset_results.csv`\
-- Display average metrics\
+App will: - Analyze each pair
+- Generate `dataset_results.csv`
+- Display average metrics
 - Build charts
 
 ------------------------------------------------------------------------
 
 ## ⚙️ Technologies Used
 
--   **Flask** --- backend\
--   **Pylint, Bandit, Radon** --- static analysis\
--   **PyTorch** --- LSTM model\
--   **Plotly / Chart.js** --- graphs\
+-   **Flask** --- backend
+-   **Pylint, Bandit, Radon** --- static analysis
+-   **PyTorch** --- LSTM model
+-   **Plotly / Chart.js** --- graphs
 -   **HTML / CSS / JS** --- UI
 
 ------------------------------------------------------------------------
 
 ## 🧠 LSTM Model
 
-Binary classifier trained to distinguish: - AI-generated code\
+Binary classifier trained to distinguish: - AI-generated code
 - Human-written code
 
-Includes: - Custom tokenizer\
-- Vocabulary embeddings\
-- LSTM encoder\
+Includes: - Custom tokenizer
+- Vocabulary embeddings
+- LSTM encoder
 - Softmax classifier
 
 ------------------------------------------------------------------------
 
 ## 🧹 Temporary Workspace
 
-Each task creates an isolated temp folder: - Saves uploaded code\
-- Runs analyzers\
+Each task creates an isolated temp folder: - Saves uploaded code
+- Runs analyzers
 - Removes folder afterward
 
 Keeps system clean and secure.
@@ -148,18 +148,7 @@ Keeps system clean and secure.
 
 ## 👥 Authors
 
-**Project by team Courage and Stupiddy** - Askar\
-- Nurbol\
+**Project by team Courage and Stupiddy** 
+- Askar
+- Nurbol
 - Nursultan
-
-------------------------------------------------------------------------
-
-## ⭐ Want to contribute?
-
-Ideas: - Improve tokenizer\
-- Add more static analyzers\
-- Add multi-language support\
-- Enhance UI/themes\
-- New LLM evaluation metrics
-
-Pull requests welcome!
