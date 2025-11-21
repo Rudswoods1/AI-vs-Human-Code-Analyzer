@@ -13,65 +13,41 @@ Upload two files or paste Python code directly.
 
 ### ✔ Automated Analysis Pipeline
 
--   **LSTM prediction** --- AI/Human classification\
--   **Pylint** --- code quality score\
--   **Radon MI** --- maintainability index\
--   **Bandit** --- security vulnerabilities\
+-   **LSTM prediction** --- AI/Human classification
+-   **Pylint** --- code quality score
+-   **Radon MI** --- maintainability index
+-   **Bandit** --- security vulnerabilities
 -   **Final Score (0--100)** --- weighted result
 
 ### ✔ Dataset Mode
 
-Upload a JSON dataset with multiple code pairs: - Analyzes each pair\
-- Generates a `dataset_results.csv` file\
+Upload a JSON dataset with multiple code pairs: - Analyzes each pair
+- Generates a `dataset_results.csv` file
 - Computes average metrics\
 - Displays summary statistics
 
 ### ✔ Clean Modern UI
 
--   Light & Dark themes\
--   Results cards\
--   Comparison table\
+-   Light & Dark themes
+-   Results cards
+-   Comparison table
 -   Plotly visualizations
 
 ------------------------------------------------------------------------
 
 ## 🖼 Screenshots
 
-```{=html}
-<h2 align="center">
-```
-Home page (Light Theme)
-```{=html}
-</h2>
-```
-`<img width="1920" src="https://github.com/user-attachments/assets/f28039d0-8c46-4763-bc96-a7a0c2db2094">`{=html}
+<h2 align="center"> Home page (Light Theme) </h2>
+<img width="1920" src="https://github.com/user-attachments/assets/f28039d0-8c46-4763-bc96-a7a0c2db2094">
 
-```{=html}
-<h2 align="center">
-```
-Home page (Dark Theme)
-```{=html}
-</h2>
-```
-`<img width="1920" src="https://github.com/user-attachments/assets/52867db7-9e2b-49aa-94db-a0611bab02fe">`{=html}
+<h2 align="center"> Home page (Dark Theme) </h2>
+<img width="1920" src="https://github.com/user-attachments/assets/52867db7-9e2b-49aa-94db-a0611bab02fe">
 
-```{=html}
-<h2 align="center">
-```
-Results: Code Analysis
-```{=html}
-</h2>
-```
-`<img width="1459" src="https://github.com/user-attachments/assets/977d582a-78c6-4f58-9147-6017125a0c97">`{=html}
+<h2 align="center"> Results: Code Analysis </h2>
+<img width="1459" src="https://github.com/user-attachments/assets/977d582a-78c6-4f58-9147-6017125a0c97">`{=html}
 
-```{=html}
-<h2 align="center">
-```
-Results: Dataset Summary
-```{=html}
-</h2>
-```
-`<img width="1459" src="https://github.com/user-attachments/assets/3b331a06-193e-41b4-b7fc-e7f85ae80150">`{=html}
+<h2 align="center"> Results: Dataset Summary </h2>
+<img width="1459" src="https://github.com/user-attachments/assets/3b331a06-193e-41b4-b7fc-e7f85ae80150">
 
 ------------------------------------------------------------------------
 
