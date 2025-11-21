@@ -1,118 +1,126 @@
-AI vs Human Code Analyzer
+# AI vs Human Code Analyzer
 
-A Flask-based web application that compares AI-generated Python code with human-written code using multiple metrics:
+A Flask-based web application that compares **AI-generated Python code**
+with **human-written code** using multiple analysis metrics.
 
-Pylint — code quality
+------------------------------------------------------------------------
 
-Bandit — security vulnerabilities
+## 🚀 Features
 
-Radon MI — maintainability index
-
-LSTM Neural Network — predicts whether the code was written by an AI model
-
-Final Score — weighted metric combining all checks
-
-UI is clean, minimalistic (Light & Dark themes) and includes:
-
-Results cards
-
-Comparison table
-
-Plotly visualizations
-
-Dataset analysis mode
-
-<img width="1920" height="966" alt="image" src="https://github.com/user-attachments/assets/f28039d0-8c46-4763-bc96-a7a0c2db2094" />
-<h2 align="center">Home page(Light Theme)</h2>
-<img width="1920" height="966" alt="image" src="https://github.com/user-attachments/assets/52867db7-9e2b-49aa-94db-a0611bab02fe" />
-<h2 align="center">Home page(Dark Theme)</h2>
-<img width="1920" height="932" alt="image" src="https://github.com/user-attachments/assets/977d582a-78c6-4f58-9147-6017125a0c97" />
-<h2 align="center">Results Code Analyzing Page</h2>
-<img width="1459" height="907" alt="Code_0WTLFR2GfU" src="https://github.com/user-attachments/assets/3b331a06-193e-41b4-b7fc-e7f85ae80150" />
-<h2 align="center">Results Dataset Page</h2>
-
-
-🚀 Features
-✔ Compare AI vs Human code
+### ✔ AI vs Human Code Comparison
 
 Upload two files or paste Python code directly.
 
-✔ Automated analysis pipeline:
+### ✔ Automated Analysis Pipeline
 
-LSTM prediction (AI / Human)
+-   **LSTM prediction** --- AI/Human classification\
+-   **Pylint** --- code quality score\
+-   **Radon MI** --- maintainability index\
+-   **Bandit** --- security vulnerabilities\
+-   **Final Score (0--100)** --- weighted result
 
-Code quality check → Pylint
+### ✔ Dataset Mode
 
-Maintainability index → Radon
+Upload a JSON dataset with multiple code pairs: - Analyzes each pair\
+- Generates a `dataset_results.csv` file\
+- Computes average metrics\
+- Displays summary statistics
 
-Security issues → Bandit
+### ✔ Clean Modern UI
 
-Final score (0–100)
+-   Light & Dark themes\
+-   Results cards\
+-   Comparison table\
+-   Plotly visualizations
 
-✔ Dataset Mode
+------------------------------------------------------------------------
 
-Upload a JSON dataset with multiple code pairs — the app:
+## 🖼 Screenshots
 
-Analyzes each pair
+```{=html}
+<h2 align="center">
+```
+Home page (Light Theme)
+```{=html}
+</h2>
+```
+`<img width="1920" src="https://github.com/user-attachments/assets/f28039d0-8c46-4763-bc96-a7a0c2db2094">`{=html}
 
-Generates a CSV file with results
+```{=html}
+<h2 align="center">
+```
+Home page (Dark Theme)
+```{=html}
+</h2>
+```
+`<img width="1920" src="https://github.com/user-attachments/assets/52867db7-9e2b-49aa-94db-a0611bab02fe">`{=html}
 
-Calculates average metrics
+```{=html}
+<h2 align="center">
+```
+Results: Code Analysis
+```{=html}
+</h2>
+```
+`<img width="1459" src="https://github.com/user-attachments/assets/977d582a-78c6-4f58-9147-6017125a0c97">`{=html}
 
-Displays summary charts
+```{=html}
+<h2 align="center">
+```
+Results: Dataset Summary
+```{=html}
+</h2>
+```
+`<img width="1459" src="https://github.com/user-attachments/assets/3b331a06-193e-41b4-b7fc-e7f85ae80150">`{=html}
 
-✔ Clean UI
+------------------------------------------------------------------------
 
-Light/Dark themes, modern layout, Plotly charts, and results table.
+## 📦 Requirements
 
-📦 Requirements
-
-Python 3.10+
+-   **Python 3.10+**
 
 Install dependencies:
 
+``` bash
 pip install -r requirements.txt
+```
 
-▶️ Run the App
+------------------------------------------------------------------------
+
+## ▶️ Run the App
+
+``` bash
 flask --app app run
+```
 
+Open in your browser:
 
-Open in browser:
+    http://127.0.0.1:5000
 
-http://127.0.0.1:5000
+------------------------------------------------------------------------
 
-📝 Usage
-1. Code Comparison Mode
+## 📝 Usage
 
-Upload two Python files:
+### **1. Code Comparison Mode**
 
-human.py
+Upload: - `human.py` - `ai.py`
 
-ai.py
-OR paste the code into text areas.
+Or paste code into text fields.
 
-Press Сравнить
+Press **Сравнить**, then view: - Pylint Score\
+- Radon MI\
+- Bandit Vulnerabilities\
+- LSTM Prediction + Confidence\
+- Final Score\
+- Comparison Table
 
-View results:
+------------------------------------------------------------------------
 
-Pylint score
+### **2. Dataset Mode**
 
-Radon MI
+Upload JSON in format:
 
-Bandit vulnerabilities
-
-LSTM prediction & confidence
-
-Final score
-
-Comparison table
-
-2. Dataset Mode
-
-Go to Dataset Analysis page
-
-Upload JSON file with structure:
-
+``` json
 [
   {
     "repo": "project-name",
@@ -121,84 +129,61 @@ Upload JSON file with structure:
     "ai_code": "..."
   }
 ]
+```
 
+App will: - Analyze each pair\
+- Generate `dataset_results.csv`\
+- Display average metrics\
+- Build charts
 
-App will:
+------------------------------------------------------------------------
 
-Analyze each pair
+## ⚙️ Technologies Used
 
-Generate dataset_results.csv
+-   **Flask** --- backend\
+-   **Pylint, Bandit, Radon** --- static analysis\
+-   **PyTorch** --- LSTM model\
+-   **Plotly / Chart.js** --- graphs\
+-   **HTML / CSS / JS** --- UI
 
-Display aggregated metrics (Human vs AI)
+------------------------------------------------------------------------
 
-Build summary charts
+## 🧠 LSTM Model
 
-⚙️ Technologies Used
+Binary classifier trained to distinguish: - AI-generated code\
+- Human-written code
 
-Flask — backend
+Includes: - Custom tokenizer\
+- Vocabulary embeddings\
+- LSTM encoder\
+- Softmax classifier
 
-Pylint, Bandit, Radon — static analysis
+------------------------------------------------------------------------
 
-PyTorch — LSTM model
+## 🧹 Temporary Workspace
 
-Plotly — charts
+Each task creates an isolated temp folder: - Saves uploaded code\
+- Runs analyzers\
+- Removes folder afterward
 
-HTML / CSS / JS — UI
+Keeps system clean and secure.
 
-Chart.js — comparison graphs
+------------------------------------------------------------------------
 
-🧠 LSTM Model
+## 👥 Authors
 
-The project includes an LSTM neural network trained to classify:
+**Project by team Courage and Stupiddy** - Askar\
+- Nurbol\
+- Nursultan
 
-AI-generated Python code
+------------------------------------------------------------------------
 
-Human-written Python code
+## ⭐ Want to contribute?
 
-Key components:
+Ideas: - Improve tokenizer\
+- Add more static analyzers\
+- Add multi-language support\
+- Enhance UI/themes\
+- New LLM evaluation metrics
 
-Custom tokenizer
-
-Vocabulary embedding
-
-Binary classification
-
-Output probability + confidence
-
-🧹 Temporary Workspace
-
-Each analysis creates an isolated temp folder:
-
-Saves uploaded code
-
-Runs tools
-
-Cleans up after completion
-
-This prevents conflicts and keeps the app safe.
-
-👥 Authors
-
-Project by team Courage and Stupiddy
-
-Askar
-
-Nurbol
-
-Nursultan
-
-⭐ Want to improve this project?
-
-You can:
-
-Add deeper LLM analysis
-
-Train better tokenizer
-
-Add multi-language support
-
-Improve UI or themes
-
-Extend dataset mode
-
-Pull requests are welcome!
+Pull requests welcome!
